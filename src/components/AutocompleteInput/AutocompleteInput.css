@@ -1,0 +1,15 @@
+.input, .results {
+	display: flex;
+	justify-content: center;
+}
+
+.results {
+	width: 50%;
+}
+
+input {
+	height: 25px;
+	border: 2px solid lightgray;
+	outline: none;
+	width: 50%;
+}

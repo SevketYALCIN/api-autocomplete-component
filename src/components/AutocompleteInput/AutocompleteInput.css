@@ -1,0 +1,36 @@
+.input,
+.results {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  width: 50%;
+	border: 2px solid lightgray;
+}
+
+.results {
+  flex-direction: column;
+	border-top: 0;
+}
+
+.results p {
+	margin: 0;
+	padding: 5px 2px;
+	font-size: 13.3333px;
+	cursor: pointer;
+}
+
+.results span {
+	padding: 5px 2px;
+	font-size: 13.3333px;
+}
+
+.results p:hover {
+	background-color: lightgray;
+}
+
+input {
+  height: 25px;
+  border: none;
+  outline: none;
+  width: 100%;
+}

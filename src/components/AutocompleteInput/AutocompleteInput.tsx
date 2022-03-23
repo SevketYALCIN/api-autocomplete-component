@@ -1,58 +1,44 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './AutocompleteInput.css';
-import CityService, { GetCitiesByNameResponse } from '../../api/CityService';
+import {
+  getCitiesByName,
+  GetCitiesByNameResponse,
+} from '../../api/CityService';
+import debounce from 'lodash.debounce';
 
 function AutocompleteInput() {
-  // state de notre composant (recherche, résultats, erreurs, affichage)
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResult, setSearchResult] = useState<GetCitiesByNameResponse>([]);
-  const [apiError, setApiError] = useState<string>();
   const [showResults, setShowResults] = useState(false);
 
-  // fonction de recherche au changement de la valeur de notre input
-  const searchCity = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setShowResults(true);
-    setApiError(undefined);
-    const inputValue = event.target.value;
-    setSearchTerm(inputValue);
-    try {
-      const response = await CityService.getCitiesByName(inputValue);
-      setSearchResult(response);
-    } catch (e) {
-      const error = e as Error;
-      setApiError(error.message);
-    }
+  const searchCities = async (value: string) =>
+    setSearchResult(await getCitiesByName(value));
+  const debouncedSearchCities = useMemo(() => debounce(searchCities, 500), []);
+
+  const onInputValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShowResults(event.target.value !== '');
+    setSearchTerm(event.target.value);
+    debouncedSearchCities(event.target.value);
   };
 
-  // fonction de recherche au changement de la valeur de notre input
   const selectCity = (name: string) => {
     setShowResults(false);
     setSearchTerm(name);
     setSearchResult([]);
   };
 
-  // rendering du résultat
-  const results =
-    searchResult.length > 0 ? (
-      searchResult.map((resultItem) => (
-        <p key={resultItem.code} onClick={() => selectCity(resultItem.nom)}>
-          {resultItem.nom}
-        </p>
-      ))
-    ) : (
-      <span>Aucun résultat</span>
-    );
+  const results = searchResult.map((resultItem) => (
+    <p key={resultItem.code} onClick={() => selectCity(resultItem.nom)}>
+      {resultItem.nom}
+    </p>
+  ));
 
   return (
     <>
       <div className="input">
-        <input type="text" value={searchTerm} onChange={searchCity} />
+        <input type="text" value={searchTerm} onChange={onInputValueChange} />
       </div>
-      {showResults && (
-        <div className="results">
-          {apiError ? <span className="error">{apiError}</span> : results}
-        </div>
-      )}
+      {showResults && <div className="results">{results}</div>}
     </>
   );
 }

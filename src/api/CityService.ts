@@ -3,7 +3,7 @@ export type GetCitiesByNameResponse = {
   code: string;
 }[];
 
-const getCitiesByName = async (searchTerm: string) => {
+export const getCitiesByName = async (searchTerm: string) => {
   const response = await fetch(
     `https://geo.api.gouv.fr/communes?nom=${searchTerm}`,
     {
@@ -23,9 +23,3 @@ const getCitiesByName = async (searchTerm: string) => {
     return Promise.reject(error);
   }
 };
-
-const CityService = {
-  getCitiesByName,
-};
-
-export default CityService;

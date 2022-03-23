@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './AutocompleteInput.css';
 import {
   getCitiesByName,
@@ -32,6 +32,12 @@ function AutocompleteInput() {
       {resultItem.nom}
     </p>
   ));
+
+  useEffect(() => {
+    return () => {
+      debouncedSearchCities.cancel();
+    };
+  }, []);
 
   return (
     <>
